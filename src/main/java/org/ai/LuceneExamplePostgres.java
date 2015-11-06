@@ -22,7 +22,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
 
-public class LuceneExample {
+public class LuceneExamplePostgres {
 	public static final File INDEX_DIRECTORY = new File("IndexDirectory");
 	@SuppressWarnings("deprecation")
 	public void createIndex() {
@@ -118,7 +118,7 @@ public class LuceneExample {
 
 	public static void main(String[] args) {
 
-		LuceneExample obj = new LuceneExample();
+		LuceneExamplePostgres obj = new LuceneExamplePostgres();
 
 		// creating index
 		obj.createIndex();
