@@ -18,7 +18,7 @@ Date: 2015-11-06 15:43:07
 -- ----------------------------
 -- Sequence structure for books_book_id_seq
 -- ----------------------------
-DROP SEQUENCE "books_book_id_seq";
+DROP SEQUENCE "books_book_id_seq" CASCADE;
 CREATE SEQUENCE "books_book_id_seq"
  INCREMENT 1
  MINVALUE 1
@@ -29,7 +29,7 @@ CREATE SEQUENCE "books_book_id_seq"
 -- ----------------------------
 -- Table structure for books
 -- ----------------------------
-DROP TABLE IF EXISTS "books";
+DROP TABLE IF EXISTS "books" CASCADE;
 CREATE TABLE "books" (
 "book_id" int4 DEFAULT nextval('books_book_id_seq'::regclass) NOT NULL,
 "book_title" varchar(100) COLLATE "default",
