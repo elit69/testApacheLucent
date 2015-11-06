@@ -36,8 +36,18 @@ public class LuceneExample {
 			String sql = "select book_id,book_title,book_details from books";
 			ResultSet rs = stmt.executeQuery(sql);
 
+			//delete old file index
+			if(INDEX_DIRECTORY.exists()){
+				 String[] myFiles = INDEX_DIRECTORY.list();
+	               for (int i=0; i<myFiles.length; i++) {
+	                   File myFile = new File(INDEX_DIRECTORY, myFiles[i]); 
+	                   myFile.delete();
+	               }
+			}
+			
 			// Lucene Section
 			Directory directory = new SimpleFSDirectory(INDEX_DIRECTORY);
+			
 			StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_40);
 			IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_40,analyzer);
 			IndexWriter iWriter = new IndexWriter(directory, config);
