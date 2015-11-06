@@ -1,6 +1,7 @@
 package org.ai;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -8,8 +9,11 @@ import java.sql.Statement;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.codecs.Codec;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.FieldType;
+import org.apache.lucene.index.CompositeReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -18,12 +22,11 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
 
 public class LuceneExample {
-	public static final File INDEX_DIRECTORY = new File("IndexDirectory");
+	public static final Path INDEX_DIRECTORY = Paths.get("IndexDirectory");
 	@SuppressWarnings("deprecation")
 	public void createIndex() {
 		System.out.println("-- Indexing --");
@@ -36,7 +39,7 @@ public class LuceneExample {
 			String sql = "select book_id,book_title,book_details from books";
 			ResultSet rs = stmt.executeQuery(sql);
 
-			//delete old file index
+		/*	//delete old file index
 			if(INDEX_DIRECTORY.exists()){
 				 String[] myFiles = INDEX_DIRECTORY.list();
 	               for (int i=0; i<myFiles.length; i++) {
@@ -44,19 +47,19 @@ public class LuceneExample {
 	                   myFile.delete();
 	               }
 			}
-			
+			*/
 			// Lucene Section
-			Directory directory = new SimpleFSDirectory(INDEX_DIRECTORY);
-			
-			StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_40);
-			IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_40,analyzer);
-			IndexWriter iWriter = new IndexWriter(directory, config);
+			Directory directory = new SimpleFSDirectory(INDEX_DIRECTORY);			
+			StandardAnalyzer analyzer = new StandardAnalyzer();
+			IndexWriterConfig config = new IndexWriterConfig(analyzer);
+			Codec code = org.apache.lucene.codecs.lucene53.Lucene53Codec.forName("Lucene53");
+			IndexWriter iWriter = new IndexWriter(directory, config.setCodec(code));
 
 			// Looping through resultset and adding to index file
 			int count = 0;
 			while (rs.next()) {
 				Document doc = new Document();
-
+				
 				doc.add(new Field("book_id", rs.getString("book_id"),
 						Field.Store.YES, Field.Index.ANALYZED));
 				doc.add(new Field("book_title", rs.getString("book_title"),
@@ -90,14 +93,14 @@ public class LuceneExample {
 	public void search(String keyword) {
 		System.out.println("-- Seaching --");
 		try {
+			
 			// Searching
-			@SuppressWarnings("deprecation")
-			IndexReader reader = IndexReader.open(FSDirectory.open(INDEX_DIRECTORY));
+			CompositeReader reader = new CompositeReader();
 			IndexSearcher searcher = new IndexSearcher(reader);
-			Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_40);
+			Analyzer analyzer = new StandardAnalyzer();
 			// MultiFieldQueryParser is used to search multiple fields
 			String[] filesToSearch = { "book_title", "book_details" };
-			MultiFieldQueryParser mqp = new MultiFieldQueryParser(Version.LUCENE_40, filesToSearch, analyzer);
+			MultiFieldQueryParser mqp = new MultiFieldQueryParser(filesToSearch, analyzer);
 
 			Query query = mqp.parse(keyword);// search the given keyword
 
