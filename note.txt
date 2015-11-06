@@ -1,0 +1,4 @@
+max_allowed_packet=500M
+my.ini/my.cnf
+########################
+($this) dont work in succes function ajax

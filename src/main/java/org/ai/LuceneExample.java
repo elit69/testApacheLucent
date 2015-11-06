@@ -124,7 +124,7 @@ public class LuceneExample {
 		obj.createIndex();
 
 		// searching keyword
-		obj.search("gay");
+		obj.search("is*");
 
 		// using wild card serach
 		/*obj.search("data*");*/

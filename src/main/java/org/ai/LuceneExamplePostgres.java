@@ -31,7 +31,7 @@ public class LuceneExamplePostgres {
 			// JDBC Section
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			// Assuming database bookstore exists
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bookstore", "root", "");
+			Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/bookstore", "postgres", "1234");
 			Statement stmt = conn.createStatement();
 			String sql = "select book_id,book_title,book_details from books";
 			ResultSet rs = stmt.executeQuery(sql);
@@ -124,7 +124,7 @@ public class LuceneExamplePostgres {
 		obj.createIndex();
 
 		// searching keyword
-		obj.search("gay");
+		obj.search("is*");
 
 		// using wild card serach
 		/*obj.search("data*");*/
