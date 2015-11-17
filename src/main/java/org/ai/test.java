@@ -6,8 +6,10 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
@@ -21,12 +23,21 @@ public class test {
 		// return
 		// DriverManager.getConnection("jdbc:postgresql://localhost:5432/bookstore",
 		// "postgres","1234");
-		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/articledb", "postgres", "1234");
+		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/articledb", "postgres", "12345");
 	}
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException,
 			ClassNotFoundException, SQLException {
-		write();
+		//write();
+		long startTime = System.currentTimeMillis();
+/*		for(ArticleDto a:search("A.content", "a")){
+			System.out.println(a);
+		}*/
+		search("A.content", "a");
+		long endTime = System.currentTimeMillis();
+		long elapsedMilliSeconds = endTime - startTime;
+		double elapsedSeconds = elapsedMilliSeconds / 1000.0;
+		System.out.println(elapsedSeconds);
 	}
 
 	public static void write() {
@@ -68,7 +79,36 @@ public class test {
 		}
 		return false;
 	}
-
+	public static ArrayList<ArticleDto> search(String type, String keyword) {
+		String sql =
+		"SELECT A.ID, A.title, A.userid, U.username, A.publish_date, A.ENABLE, A.image "+
+		"FROM tbarticle A INNER JOIN tbuser U "+
+		"ON U.ID = A.userid "+
+		"WHERE LOWER ("+ type +") LIKE LOWER (?) "+
+		"ORDER BY A.ID ";
+		try (Connection cnn = getConnection();) {
+			PreparedStatement ps = cnn.prepareStatement(sql);			
+			ps.setString(1, "%" +keyword + "%");
+			ResultSet rs = ps.executeQuery();
+			System.out.println(ps.toString());
+			ArrayList<ArticleDto> listArticle = new ArrayList<ArticleDto>();
+			while (rs.next()) {
+				ArticleDto s = new ArticleDto();
+				s.setId(rs.getInt("id"));
+				s.setTitle(rs.getString("title"));
+				s.setUserid(rs.getInt("userid"));
+				s.setUsername(rs.getString("username"));
+				s.setPdate(rs.getDate("publish_date"));
+				s.setEnable(rs.getBoolean("ENABLE"));
+				s.setImage(rs.getString("image"));
+				listArticle.add(s);
+			}
+			return listArticle;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	public static int randInt(int min, int max) {
 		return new Random().nextInt((max - min) + 1) + min;
 	}
