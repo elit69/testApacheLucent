@@ -1,6 +1,7 @@
 package org.ai;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.sql.CallableStatement;
@@ -20,17 +21,27 @@ public class test {
 	public static Connection getConnection()
 			throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Class.forName("com.mysql.jdbc.Driver").newInstance();
-		// Assuming database bookstore exists
-		// return
-		// DriverManager.getConnection("jdbc:postgresql://localhost:5432/bookstore",
-		// "postgres","1234");
 		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/articledb", "postgres", "12345");
 	}
 
 	public static void main(String[] args)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-		write();
-
+		int record =0;
+		long startTime = System.currentTimeMillis();
+		File INDEX_DIRECTORY = new File("books");
+		if(INDEX_DIRECTORY.exists()){
+			 String[] myFiles = INDEX_DIRECTORY.list();
+              for (int i=0; i<myFiles.length; i++) {
+            	  File myFile = new File(INDEX_DIRECTORY, myFiles[i]); 
+                  record+=write(myFile.toPath().toString());
+              }
+		}			
+		long endTime = System.currentTimeMillis();
+		long elapsedMilliSeconds = endTime - startTime;
+		double elapsedSeconds = elapsedMilliSeconds / 1000.0;
+		System.out.println(elapsedSeconds + "seconds");
+		System.out.println(record + " records");
+		
 /*		long startTime = System.currentTimeMillis();
 		ArrayList<ArticleDto> listarticle = search1("A.content", "as", 15, 7600);
 		long endTime = System.currentTimeMillis();
@@ -55,36 +66,36 @@ public class test {
 		System.out.println(elapsedSeconds);		*/
 	}
 
-	public static void write() {
+	public static int write(String bookname) {
+		System.out.println(bookname);
 		try {
-			BufferedReader br = new BufferedReader(
-					new InputStreamReader(new FileInputStream("war and peace.txt"), "UTF-8"));
-			int i = 1;
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(bookname), "UTF-8"));
+			int i = 0;
 			StringBuilder sb = new StringBuilder();
 			String line = br.readLine();
 			while (line != null) {
-				if (i == 100) {
-					sb.setLength(sb.length() - 1);
-					add(sb.toString());
-					sb = new StringBuilder();
-					i = 1;
-				}
-				if (line.length() <= 5) {
+				if (line.length() > 20) {
+					String title = line.substring(0, 20);
+					if (line.contains("'")) {
+						line = line.replace("'", "''");
+						title = title.replace("'", "''");
+					}
+					sb.append("('" + title + " ', " + randInt(1, 6) + " , " + "'" + line + " ', " + "'" + currentDate()
+							+ " ', " + true + " , " + "'some image'" + "),");					
 					i++;
-					line = br.readLine();
-					continue;
 				}
-				String title = line.substring(0, 6);
-				sb.append("('" + title + "'," + randInt(1, 6) + ", '" + line + "', '" + currentDate() + "'," + true
-						+ ",'some image'" + "),");
 				line = br.readLine();
-				i++;
 			}
+			sb.setLength(sb.length() - 1);
+			add(sb.toString());
+			sb = null;
 			br.close();
+            System.out.println(i + " records");
+			return i;
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.err.println(e);
 		}
+		return 0;
 	}
 
 	private static boolean add(String s) {
