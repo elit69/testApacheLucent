@@ -32,6 +32,7 @@ public class test {
 		if(INDEX_DIRECTORY.exists()){
 			 String[] myFiles = INDEX_DIRECTORY.list();
               for (int i=0; i<myFiles.length; i++) {
+            	  if(myFiles[i].equals("books.7z")) continue;
             	  File myFile = new File(INDEX_DIRECTORY, myFiles[i]); 
                   record+=write(myFile.toPath().toString());
               }
@@ -41,6 +42,8 @@ public class test {
 		double elapsedSeconds = elapsedMilliSeconds / 1000.0;
 		System.out.println(elapsedSeconds + "seconds");
 		System.out.println(record + " records");
+		
+		//write("books/1984 - George Orwell.txt");
 		
 /*		long startTime = System.currentTimeMillis();
 		ArrayList<ArticleDto> listarticle = search1("A.content", "as", 15, 7600);
