@@ -16,27 +16,30 @@ import java.util.Date;
 import java.util.Random;
 
 public class test {
-	public static String value;
+
 
 	public static Connection getConnection()
 			throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
-		Class.forName("com.mysql.jdbc.Driver").newInstance();
+		Class.forName("org.postgresql.Driver").newInstance();
 		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/articledb", "postgres", "12345");
 	}
 
 	public static void main(String[] args)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		int record =0;
+		int times = 4;
 		long startTime = System.currentTimeMillis();
-		File INDEX_DIRECTORY = new File("books");
-		if(INDEX_DIRECTORY.exists()){
-			 String[] myFiles = INDEX_DIRECTORY.list();
-              for (int i=0; i<myFiles.length; i++) {
-            	  if(myFiles[i].equals("books.7z")) continue;
-            	  File myFile = new File(INDEX_DIRECTORY, myFiles[i]); 
-                  record+=write(myFile.toPath().toString());
-              }
-		}			
+		for (int i = 0; i < times; i++) {
+			File INDEX_DIRECTORY = new File("books");
+			if(INDEX_DIRECTORY.exists()){
+				 String[] myFiles = INDEX_DIRECTORY.list();
+	              for (int y=0; y<myFiles.length; y++) {
+	            	  if(myFiles[y].equals("books.7z")) continue;
+	            	  File myFile = new File(INDEX_DIRECTORY, myFiles[y]); 
+	                  record+=write(myFile.toPath().toString());
+	              }
+			}	
+		}		
 		long endTime = System.currentTimeMillis();
 		long elapsedMilliSeconds = endTime - startTime;
 		double elapsedSeconds = elapsedMilliSeconds / 1000.0;

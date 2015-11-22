@@ -1,4 +1,4 @@
-package org.ai;
+/*package org.ai;
 
 import java.io.File;
 import java.sql.Connection;
@@ -127,11 +127,11 @@ public class LuceneExamplePostgres {
 		obj.search("is*");
 
 		// using wild card serach
-		/*obj.search("data*");*/
+		obj.search("data*");
 
 		// using logical operator
-		/*obj.search("data1 OR data2");
-		obj.search("data1 AND data2");*/
+		obj.search("data1 OR data2");
+		obj.search("data1 AND data2");
 
 	}
-}
+}*/

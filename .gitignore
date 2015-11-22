@@ -1,2 +1,3 @@
-/IndexDirectory
 /target/
+/lucent_index
+/books/*.txt
