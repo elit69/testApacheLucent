@@ -1,6 +1,6 @@
 package org.ai;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class ArticleDto {
 	
@@ -56,17 +56,15 @@ public class ArticleDto {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	@Override
-	public String toString() {
-		return "Article [id=" + id + ", title=" + title + ", userid=" + userid
-				+ ", content=" + content + ", pubdaye=" + pdate + ", enable="
-				+ enable + ", image=" + image + "]";
-	}
 	public Date getPdate() {
 		return pdate;
 	}
 	public void setPdate(Date pdate) {
 		this.pdate = pdate;
 	}
-	
+	@Override
+	public String toString() {
+		return "ArticleDto [id=" + id + ", title=" + title + ", userid=" + userid + ", username=" + username
+				+ ", content=" + content + ", pdate=" + pdate + ", enable=" + enable + ", image=" + image + "]";
+	}	
 }
